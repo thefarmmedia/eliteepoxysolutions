@@ -25,3 +25,10 @@
 .section-action{margin-top:28px}
 .surfaces{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media(max-width:760px){.hero>.container{grid-template-columns:1fr}.hero{min-height:0}.hero .container{padding:48px 0}.hero h1{font-size:clamp(2.4rem,10vw,3.6rem)}.hero-estimate{max-width:500px}.page-hero h1{font-size:clamp(2.4rem,9vw,3.4rem)}}
+
+.calculator-flow { max-width: 820px; margin-inline: auto; }
+.calculator-steps { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; margin-bottom: 1.5rem; padding-bottom: .75rem; border-bottom: 1px solid var(--line); font-weight: 700; }
+.calculator-contact { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+.calculator-flow .result-panel { margin-top: 1.5rem; }
+.calculator-flow [hidden] { display: none; }
+#estimate-size-error:empty { display: none; }

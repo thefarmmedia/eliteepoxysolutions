@@ -23,7 +23,9 @@
     var length=document.getElementById('length-ft');
     var width=document.getElementById('width-ft');
     var condition=document.getElementById('floor-condition');
-    var locked=document.getElementById('estimate-locked');
+    var continueButton=document.getElementById('estimate-continue');
+    var contactStep=document.getElementById('estimate-lead');
+    var sizeError=document.getElementById('estimate-size-error');
     var reveal=document.getElementById('estimate-reveal');
     var dimensionsMode=false;
     var price=document.getElementById('estimated-range');
@@ -41,7 +43,7 @@
         sqft.value=lengthFeet>0&&widthFeet>0?String(Math.round(lengthFeet*widthFeet*100)/100):'';
       }
       var area=Number(sqft.value);
-      locked.hidden=false;
+      sizeError.textContent='';
       reveal.hidden=true;
       price.textContent='';
       leadSquareFeet.value='';
@@ -76,6 +78,16 @@
         recalc();
       });
     });
+    continueButton.addEventListener('click',function(){
+      if(!quoteHidden.value){
+        sizeError.textContent='Enter a floor size of at least 50 square feet to continue.';
+        sqft.focus();
+        return;
+      }
+      contactStep.hidden=false;
+      continueButton.setAttribute('aria-expanded','true');
+      document.getElementById('calculator-lead-name').focus();
+    });
     recalc();
   }
   document.querySelectorAll('form[data-async-lead]').forEach(function(form){
@@ -103,7 +115,6 @@
           status.textContent='Thanks — your request was submitted.';
           if(quoteHidden.value===submittedRange&&body.get('square_feet')===leadSquareFeet.value&&body.get('concrete_condition')===leadCondition.value){
             price.textContent=submittedRange;
-            locked.hidden=true;
             reveal.hidden=false;
             reveal.setAttribute('tabindex','-1');
             reveal.focus();
