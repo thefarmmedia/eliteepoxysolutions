@@ -23,6 +23,9 @@
     var length=document.getElementById('length-ft');
     var width=document.getElementById('width-ft');
     var condition=document.getElementById('floor-condition');
+    var locked=document.getElementById('estimate-locked');
+    var reveal=document.getElementById('estimate-reveal');
+    var dimensionsMode=false;
     var price=document.getElementById('estimated-range');
     var summary=document.getElementById('estimate-summary');
     var details=document.getElementById('calc-details');
@@ -33,7 +36,14 @@
     var leadCondition=document.getElementById('lead-condition');
     var currency=function(n){return n.toLocaleString('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});};
     var recalc=function(){
-      var area=Number(sqft.value)||((Number(length.value)||0)*(Number(width.value)||0));
+      var lengthFeet=Number(length.value), widthFeet=Number(width.value);
+      if(dimensionsMode){
+        sqft.value=lengthFeet>0&&widthFeet>0?String(Math.round(lengthFeet*widthFeet*100)/100):'';
+      }
+      var area=Number(sqft.value);
+      locked.hidden=false;
+      reveal.hidden=true;
+      price.textContent='';
       leadSquareFeet.value='';
       leadCondition.value=condition.options[condition.selectedIndex].text;
       if(!Number.isFinite(area)||area<50){
@@ -44,14 +54,15 @@
       }
       leadSquareFeet.value=area;
       var low=area*6, high=area*8;
-      price.textContent=currency(low)+' – '+currency(high);
+      var range=currency(low)+' – '+currency(high);
       summary.textContent='Flake epoxy at $6–$8 per sq ft. The final quote may vary based on prep, repair and concrete condition.';
       details.hidden=false;
       sqftOut.textContent=area.toLocaleString()+' sq ft';
-      quoteHidden.value=currency(low)+' – '+currency(high);
+      quoteHidden.value=range;
       floorHidden.value=area+' square feet, flake epoxy; '+condition.options[condition.selectedIndex].text;
     };
     garageSize.addEventListener('change',function(){
+      dimensionsMode=false;
       sqft.value=garageSize.value;
       length.value='';
       width.value='';
@@ -60,7 +71,8 @@
     [sqft,length,width,condition].forEach(function(el){
       el.addEventListener('input',function(){
         if(el!==condition)garageSize.value='';
-        if((el===length||el===width)&&length.value&&width.value)sqft.value='';
+        if(el===length||el===width)dimensionsMode=true;
+        if(el===sqft){dimensionsMode=false;length.value='';width.value='';}
         recalc();
       });
     });
@@ -70,10 +82,45 @@
     form.addEventListener('submit',async function(e){
       e.preventDefault();var submit=form.querySelector('[type=submit]');var status=form.querySelector('[data-form-status]');
       if(!form.reportValidity())return;
-      submit.disabled=true;submit.textContent='Sending...';status.textContent='';
-      try{var data=new FormData(form);var body=new URLSearchParams();data.forEach(function(value,key){body.append(key,value);});var result=await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body.toString()});if(!result.ok)throw new Error('Submission unavailable');status.className='lead-success';status.textContent='Thanks — your request has been submitted. We will follow up soon.';form.reset();if(form.hasAttribute('data-calculator-lead')&&calculator)condition.dispatchEvent(new Event('input'));}
-      catch(err){status.className='lead-error';status.textContent='Your message could not be sent. Please call (804) 878-7723 instead.';}
-      finally{submit.disabled=false;submit.textContent='Send My Request';}
+      var isCalculator=form.hasAttribute('data-calculator-lead');
+      var submittedRange=isCalculator?quoteHidden.value:'';
+      if(isCalculator&&!submittedRange){
+        status.className='lead-error';
+        status.textContent='Enter a floor size of at least 50 square feet to get an estimate.';
+        sqft.focus();
+        return;
+      }
+      var originalLabel=submit.textContent;
+      submit.disabled=true;
+      submit.textContent='Sending...';
+      status.textContent='';
+      try{
+        var body=new URLSearchParams(new FormData(form));
+        var result=await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body.toString()});
+        if(!result.ok)throw new Error('Submission unavailable');
+        status.className='lead-success';
+        if(isCalculator){
+          status.textContent='Thanks — your request was submitted.';
+          if(quoteHidden.value===submittedRange&&body.get('square_feet')===leadSquareFeet.value&&body.get('concrete_condition')===leadCondition.value){
+            price.textContent=submittedRange;
+            locked.hidden=true;
+            reveal.hidden=false;
+            reveal.setAttribute('tabindex','-1');
+            reveal.focus();
+          }else{
+            status.textContent='Your request was submitted. Submit again to see an estimate for your updated project details.';
+          }
+        }else{
+          status.textContent='Thanks — your request has been submitted. We will follow up soon.';
+          form.reset();
+        }
+      }catch(err){
+        status.className='lead-error';
+        status.textContent='Your message could not be sent. Please try again or call (804) 878-7723.';
+      }finally{
+        submit.disabled=false;
+        submit.textContent=originalLabel;
+      }
     });
   });
 })();
