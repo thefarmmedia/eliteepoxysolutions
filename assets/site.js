@@ -108,8 +108,8 @@
       status.textContent='';
       try{
         var body=new URLSearchParams(new FormData(form));
-        var result=await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body.toString()});
-        if(!result.ok)throw new Error('Submission unavailable');
+        var result=await fetch(isCalculator?form.action:'/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:body.toString()});
+        if(!result.ok||(isCalculator&&result.status!==204))throw new Error('Submission unavailable');
         status.className='lead-success';
         if(isCalculator){
           status.textContent='Thanks — your request was submitted.';
