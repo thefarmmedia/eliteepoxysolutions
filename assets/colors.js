@@ -1,5 +1,5 @@
 const filters = document.querySelector('.finish-filters');
-const cards = document.querySelectorAll('.finish-card');
+const swatches = document.querySelectorAll('.finish-swatch-button');
 const collections = document.querySelectorAll('.finish-collection');
 const preview = document.querySelector('#finish-preview');
 
@@ -17,11 +17,14 @@ filters.addEventListener('click', (event) => {
   }
 });
 
-for (const card of cards) {
-  const button = card.querySelector('[data-swatch]');
+const previewSwatch = preview.querySelector('.finish-preview-swatch');
+const previewImage = previewSwatch.querySelector('img');
+for (const button of swatches) {
   button.addEventListener('click', () => {
-    preview.querySelector('h2').textContent = card.querySelector('strong').textContent;
-    preview.querySelector('.swatch').className = 'swatch ' + button.dataset.swatch;
+    preview.querySelector('h2').textContent = button.querySelector('strong').textContent;
+    previewSwatch.style.background = button.dataset.gradient || '';
+    previewImage.hidden = !button.dataset.image;
+    if (button.dataset.image) previewImage.src = button.dataset.image;
     preview.showModal();
   });
 }
