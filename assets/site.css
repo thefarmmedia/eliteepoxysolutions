@@ -45,3 +45,31 @@
 #finish-preview::backdrop { background: rgba(8, 23, 36, .75); }
 #finish-preview form { margin-bottom: 1rem; }
 #finish-preview .swatch { height: clamp(160px, 40vh, 340px); margin-bottom: 1rem; }
+
+.finish-hero { background: linear-gradient(135deg, var(--navy), var(--blue-dark)); color: white; padding: 56px 0; text-align: center; }
+.finish-hero h1 { font-size: clamp(2.5rem, 5vw, 3.75rem); }
+.finish-hero p { max-width: 580px; margin: 0 auto 1.5rem; }
+.finish-hero .btn-row { justify-content: center; }
+.finish-hero .eyebrow, .finish-collection .eyebrow { color: var(--cyan); }
+.finish-filter-bar { background: white; border-bottom: 1px solid var(--line); }
+.finish-filter-bar .finish-filters { align-items: center; margin: 0 auto; padding-block: .75rem; }
+.finish-filter-bar .finish-filters button { border-radius: 999px; font-size: .85rem; }
+.finish-filters > span { margin-left: auto; color: var(--muted); font-size: .85rem; }
+.finish-sample-bar { background: var(--blue-dark); color: white; padding-block: 1rem; }
+.finish-sample-bar .container { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .75rem 2rem; }
+.finish-sample-bar strong, .finish-sample-bar span { display: block; }
+.finish-sample-bar span { font-size: .85rem; }
+.finish-collection { background: var(--navy); color: white; padding: 56px 0; }
+.finish-collection[data-finish-group="metallic"] { background: var(--deep); }
+.finish-collection h2 { font-size: clamp(2rem, 4vw, 3rem); }
+.finish-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 16px; }
+.finish-card { border: 1px solid rgba(255,255,255,.23); border-radius: 14px; overflow: hidden; }
+.finish-card:hover, .finish-card:focus-within { border-color: var(--cyan); }
+.finish-card .finish-swatch-button { height: 100%; background: var(--blue-dark); color: white; padding: 0; }
+.finish-card .swatch { height: 180px; margin: 0; }
+.finish-card .finish-card-copy { display: grid; gap: .4rem; margin: 0; padding: .85rem 1rem; }
+.finish-card-copy span, .finish-card-copy small { font-size: .8rem; line-height: 1.4; }
+.finish-card-copy small { color: white; text-decoration: underline; }
+.finish-disclaimer { padding-block: 1rem; background: var(--light); }
+@media (max-width: 950px) { .finish-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+@media (max-width: 620px) { .finish-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; } .finish-card .swatch { height: 130px; } }
